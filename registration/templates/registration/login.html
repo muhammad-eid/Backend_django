@@ -1,0 +1,43 @@
+{% extends "./base.html" %}
+{% load  static %}
+
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+
+  {% if form.errors %}
+    <p class='w-11/12 bg-red-300 border-red-600 rounded-lg py-1 px-3 m-2 mx-auto'>Your email or password aren't correct. Please try again.</p>
+  {% endif %}
+
+  {% if next %}
+    {% if user.is_authenticated %}
+      <p>Your account doesn't have access to this page. To proceed,
+      please login with an account that has access.</p>
+    {% else %}
+      <p>Please login to see this page.</p>
+    {% endif %}
+  {% endif %} 
+
+
+{% comment %}  {% endcomment %}
+<form class="w-full mx-auto h-full py-10" method="post">
+  {% csrf_token %}
+    <img src="{% static 'registaration/images/img-02.png' %}" class="w-2/5 lg:w-1/5 mx-auto"/>
+    <input class="block w-4/5 md:w-3/5 lg:w-2/5 mx-auto px-3 py-1 mt-3 bg-gray-100" placeholder="Email" id="{{ form.username.id_for_label }}" maxlength="30" name="{{ form.username.html_name }}" type="email" /> 
+    <div class="block w-4/5 md:w-3/5 lg:w-2/5 mx-auto px-3 text-red-500">{{ form.username.errors }}</div>
+    
+    
+    <input class="block w-4/5 md:w-3/5 lg:w-2/5 mx-auto px-3 py-1 mt-3 bg-gray-100" id="{{ form.password.id_for_label }}" placeholder="Password" maxlength="30" name="{{ form.password.html_name }}" type="password" /> 
+    <div class="block w-4/5 md:w-3/5 lg:w-2/5 mx-auto px-3 text-red-500">{{ form.password.errors }}</div>
+    <a class="block w-4/5 md:w-3/5 lg:w-2/5 mx-auto px-3 py-1 m-3 hover:text-gray-600" href="{% url 'password_reset' %}">Lost password?</a>
+    
+    <input class="block w-4/5 md:w-3/5 lg:w-2/5 mx-auto px-3 py-1 m-3 bg-green-500 text-white border-2 border-white hover:border-gray-200" type="submit" class="btn btn-primary" value="login" />
+    <input type="hidden" name="next" value="{{ next }}" />
+</form>
+
+
+  {# Assumes you setup the password_reset view in your URLconf #}
+  
+
+{% endblock %}

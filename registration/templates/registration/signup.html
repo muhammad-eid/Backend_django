@@ -1,0 +1,55 @@
+{% extends "./base.html" %}
+{% load  static %}
+
+
+{% block title %}Sign Up{% endblock %}
+
+{% block content %}
+
+  {% if form.email.errors %}
+    <div class='w-11/12 bg-red-300 border-red-200 text-white rounded-lg py-1 px-3 m-2 mx-auto text-bold'>{{form.email.errors}}</div>
+  {% endif %}
+
+  {% if next %}
+    {% if user.is_authenticated %}
+      <p>Your account doesn't have access to this page. To proceed,
+      please login with an account that has access.</p>
+    {% else %}
+      <p>Please login to see this page.</p>
+    {% endif %}
+  {% endif %} 
+
+
+<form class="w-full mx-auto h-full py-10" method="post">
+  {% csrf_token %}
+    <div class="block w-4/5 md:w-3/5 lg:w-2/5 mx-auto px-3 py-1 mt-3 text-green-600 text-center  font-mono  text-4xl font-extrabold tracking-wide mb-10" >Estidama Signup</div>
+    {% comment %} <img src="{% static 'registaration/images/img-02.png' %}" class="w-2/5 lg:w-1/5 mx-auto"/> {% endcomment %}
+
+    <input class="block w-4/5 md:w-3/5 lg:w-2/5 mx-auto px-3 py-1 mt-3 bg-gray-100" placeholder="First Name" id="{{ form.first_name.id_for_label }}" maxlength="30" name="{{ form.first_name.html_name }}" type="text" /> 
+    <div class="block w-4/5 md:w-3/5 lg:w-2/5 mx-auto px-3 text-red-500">{{ form.first_name.errors }}</div>
+
+    <input class="block w-4/5 md:w-3/5 lg:w-2/5 mx-auto px-3 py-1 mt-3 bg-gray-100" placeholder="Last Name" id="{{ form.last_name.id_for_label }}" maxlength="30" name="{{ form.last_name.html_name }}" type="text" /> 
+    <div class="block w-4/5 md:w-3/5 lg:w-2/5 mx-auto px-3 text-red-500">{{ form.last_name.errors }}</div>
+    
+    <input class="block w-4/5 md:w-3/5 lg:w-2/5 mx-auto px-3 py-1 mt-3 bg-gray-100" placeholder="Email" id="{{ form.email.id_for_label }}" maxlength="30" name="{{ form.email.html_name }}" type="email" /> 
+    <div class="block w-4/5 md:w-3/5 lg:w-2/5 mx-auto px-3 text-red-500">{{ form.email.errors }}</div>
+
+    <input class="block w-4/5 md:w-3/5 lg:w-2/5 mx-auto px-3 py-1 mt-3 bg-gray-100" placeholder="Company Name" id="{{ form.company_name.id_for_label }}" maxlength="30" name="{{ form.company_name.html_name }}" type="text" /> 
+    <div class="block w-4/5 md:w-3/5 lg:w-2/5 mx-auto px-3 text-red-500">{{ form.company_name.errors }}</div>
+
+    <input class="block w-4/5 md:w-3/5 lg:w-2/5 mx-auto px-3 py-1 mt-3 bg-gray-100" placeholder="Phone Number" id="{{ form.phone.id_for_label }}" maxlength="30" name="{{ form.phone.html_name }}" type="text" /> 
+    <div class="block w-4/5 md:w-3/5 lg:w-2/5 mx-auto px-3 text-red-500">{{ form.phone.errors }}</div>
+    
+    <input class="block w-4/5 md:w-3/5 lg:w-2/5 mx-auto px-3 py-1 mt-3 bg-gray-100" id="{{ form.password1.id_for_label }}" placeholder="Password1" maxlength="30" name="{{ form.password1.html_name }}" type="password" /> 
+    <div class="block w-4/5 md:w-3/5 lg:w-2/5 mx-auto px-3 text-red-500">{{ form.password1.errors }}</div>
+
+    <input class="block w-4/5 md:w-3/5 lg:w-2/5 mx-auto px-3 py-1 mt-3 bg-gray-100" id="{{ form.password2.id_for_label }}" placeholder="Password2" maxlength="30" name="{{ form.password2.html_name }}" type="password" /> 
+    <div class="block w-4/5 md:w-3/5 lg:w-2/5 mx-auto px-3 text-red-500">{{ form.password2.errors }}</div>
+    
+    <input class="block w-4/5 md:w-3/5 lg:w-2/5 mx-auto px-3 py-1 m-3 bg-green-500 text-white border-2 border-white hover:border-gray-200" type="submit" class="btn btn-primary" value="Signup" />
+    <input type="hidden" name="next" value="{{ next }}" />
+</form>
+
+  
+
+{% endblock %}

@@ -1,0 +1,102 @@
+<!-- {%load static%} -->
+
+<!DOCTYPE html>
+<html lang="en" class="min-h-screen">
+<head>
+	<title>{% block title %}Estidama{% endblock %}</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+<!--===============================================================================================-->	
+<!--===============================================================================================-->
+<!--===============================================================================================-->
+<!--===============================================================================================-->
+<!--===============================================================================================-->	
+    <!-- <link rel="stylesheet" href="{%static 'registaration/css/custom.css'%}"> -->
+<!--===============================================================================================-->
+<!--===============================================================================================-->
+    <script src="https://cdn.tailwindcss.com"></script>
+<!--===============================================================================================-->
+</head>
+<body class="min-h-screen bg-gray-200">
+	
+    <nav class="flex flex-row justify-between px-3 py-2 bg-green-600 font-bold text-white shadow-lg sticky">
+        <nav class="flex flex-row">
+                <a class="px-3 hover:text-gray-200" href="">Logo</a>
+                <a class="px-3 hover:text-gray-200" href="">Home</a>
+                <a class="px-3 hover:text-gray-200" href="">aaa</a>
+
+        </nav>
+        <nav>
+            {% if user.is_authenticated %}
+            <a class="px-3 hover:text-gray-200 hidden md:inline-flex" href="{%url 'dashboard'%}">{{user.first_name}}  {{user.last_name}}</a>
+            <a class="px-3 hover:text-gray-200 border-2 border-white hover:border-gray-200 rounded-xl py-1" href="{%url 'logout'%}">Logout</a>
+            {% else %}
+                {% if '/login/' == request.path %}
+                <a class="px-3 hover:text-gray-200 border-2 border-white hover:border-gray-200 rounded-xl py-1" href="{%url 'signup'%}">Sign Up</a>
+                {% else %}
+                <a class="px-3 hover:text-gray-200 border-2 border-white hover:border-gray-200 rounded-xl py-1" href="{% url 'login' %}">Login</a>
+                {% endif %}
+            {% endif %}
+
+            <a class="px-3 hover:text-gray-200 border-2 border-white hover:border-gray-200 rounded-xl py-1" href="{% url 'login' %}">{{request.path}}</a> 
+        </nav>
+    </nav>
+    <!-- <main class="bg-gradient-to-tr from-emerald-400 to-green-300 m-5 md:mx-28 lg:mx-48 p-2 md:p-4 lg:p-6 rounded-lg" style="height:85vh"> -->
+
+    <main>
+        <section class="md:flex flex-row-reverse m-3 md:mx-10 lg:mx-15 ">
+             <!-- side bar -->
+            <section class="md:ml-3 mb-3 md:mb-0 basis-1/3	" >
+                 <!-- side bar item -->
+                
+                <section class="bg-white mb-2  rounded-lg	" >
+                    <div class="bg-gray-100 p-1 md:p-2 lg:p-3 rounded-t-lg font-bold px-5">Notifications</div>
+                    <div class="p-1 md:p-2 lg:p-3 ">
+                        {% for notification in notifications%} 
+                        {% comment %} add hear  down{% endcomment %}
+                        {% endfor %}
+                        <div class="bg-blue-200 border-2 rounded-lg p-2 m-2">
+                            <div>notification header</div>
+                            <div>notification body {% lorem 1 b random %}</div>
+                            <form method="POST">
+                                {% csrf_token %}
+                                <input hidden type="text" name="notification_id">
+                                <input class="block bg-green-500 text-white hover:bg-green-600 w-full mx-auto my-2 font-bold" type="submit" value="OK"/>
+                            </form>
+                        </div>
+                    </div>
+                </section>
+
+
+                <section class="bg-white mb-2  rounded-lg	" >
+                    <div class="bg-gray-100 p-1 md:p-2 lg:p-3 rounded-t-lg font-bold px-5">Get Gift Key</div>
+                    <div class="p-1 md:p-2 lg:p-3 w-11/12 mx-auto">
+                            <div>please send message that describe why you need it?</div>
+                            <form method="POST">
+                                {% csrf_token %}
+                                <textarea class="block bg-gray-200 w-full rounded-md py-1 px-3" rows="3" type="text" name="get_gift_message" placeholder="Message" id='get_gift_message'></textarea>
+                                <input class="block bg-green-500 text-white hover:bg-green-600 w-full my-2 font-bold" type="submit" value="Send"/>
+                            </form>
+                    </div>
+                </section>
+            
+
+                
+        
+            </section>
+            <!-- main section -->
+            <section class="bg-white p-2 md:p-4 lg:p-6 rounded-lg basis-2/3	" >
+                {% block main_content %}Estidama content{% endblock main_content%}
+            </section>
+        </section>
+        <!-- footer section -->
+        <section class="bg-white m-3 md:mx-10 lg:mx-15 p-2 md:p-4 lg:p-6 rounded-lg" >
+            {% block footer_content %}footer content{% endblock footer_content%}
+        </section>
+    </main>
+	
+	
+
+
+</body>
+</html>

@@ -1,0 +1,72 @@
+{% extends "./base_dashboard.html" %}
+
+{% block main_content %}
+
+  <section class="py-2">
+    <div class="bg-green-600 shadow-lg px-3 w-full font-bold text-white text-lg py-1">
+      Personal Data
+    </div>
+    <div class="md:grid grid-cols-2	gap-2 px-3 mt-2 pt-1">
+      <pre>Name   : {{user.first_name}} {{user.last_name}}</pre>
+      <pre>Joined : {{user.date_joined|date:"d/m/Y"}}</pre>
+      <pre>Phone  : {{user.phone}}</pre>
+      <pre>Company: {{user.company_name}}</pre>
+    </div>
+  </section>
+
+  <section class="py-2">
+    <div class="flex flex-row justify-between bg-green-600 shadow-lg px-3 w-full font-bold text-white text-lg py-1">
+      <div>Keys Data</div>
+      <div class="bg-green-500 text-white hover:bg-green-600 px-5 border-2 rounded-md border-white" onclick="show_get_purchased_key()">Get Purchased Key</div>
+
+      
+    </div>
+    {% for key in keys reversed%}
+    {% if key.state == "Suspended" %}
+    <div class="md:grid grid-cols-2	gap-2 px-3 mt-2 pt-1 border-2 rounded-md bg-red-100">
+    {% else %}
+    <div class="md:grid grid-cols-2	gap-2 px-3 mt-2 pt-1 border-2 rounded-md bg-blue-100">
+    {% endif %}
+      {% if key.state == "Suspended" %}
+        <div class="bg-red-500 text-white col-span-2	p-2 m-1 border-2 border-red-600 rounded-lg">
+          <div class="font-bold">Warning!</div>
+          <div class="px-2">Upload document prove that you transfared money to activate your key</div>
+          <form method="post" class="px-2 md:flex " enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ImageForm.as_p}}
+            {% comment %} <input type="file" name="img_confirm_purchased" accept="image/*" id="id_img_confirm_purchased" class="block mx-auto my-2 file:px-2 bg-white w-72 file:bg-green-500 file:border-0 text-black file:text-white file:font-bold">  {% endcomment %}
+
+            <input type="submit" value="Upload" class="block mx-auto bg-green-500 text-white hover:bg-green-600 my-2 font-bold w-72">
+          </form>
+
+        </div>
+      {% endif %}
+      {% if key.state == "Waiting" %}
+        <div class="bg-red-300 text-white col-span-2	p-2 m-1 border-2 border-red-600 rounded-lg">
+          <div class="font-bold">Info!</div>
+          <div class="px-2">Your Uploaded document is under processing. if there any proplem send maill to support</div>
+        </div>
+      {% endif %}
+
+      {% if key.state == "Suspended" %}
+      <pre>Key   : Hidden</pre>
+      {% else %}
+      <pre>Key   : {{key.key}}</pre>
+      {% endif %}
+      <pre>Type  : {{key.type}}</pre>
+      <pre>State : {{key.state}}</pre>
+      <pre>Active: {{key.is_active}}</pre>
+      <pre>Duration : {{key.duration}}</pre>
+      <pre>Activated: {{key.reactivation_counts}} Times</pre>
+      <pre>Generated: {{key.gen_date|date:"h:iA d/m/Y"}}</pre>
+      {% if key.act_date is Null  %}
+      <pre>Activated: Not yet</pre>
+      {% else %}
+      <pre>Activated: {{key.act_date|date:"h:iA d/m/Y"}}</pre>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </section>
+  
+
+{% endblock main_content%}

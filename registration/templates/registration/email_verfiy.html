@@ -1,0 +1,37 @@
+
+{% extends "./base.html" %}
+{% load  static %}
+
+
+{% block title %}Confirm Email{% endblock %}
+
+{% block content %}
+
+{%if baned %}
+<p class='w-11/12 bg-red-300 border-red-600 rounded-lg py-1 px-3 m-2 mx-auto'>you have to wait {{ban}} minetes, please try leter</p>
+{%  endif %}
+
+{%if OTP == 'wrong'%}
+<p class='w-11/12 bg-red-300 border-red-600 rounded-lg py-1 px-3 m-2 mx-auto'>Wrong OTP</p>
+{%  endif %}
+
+{%if OTP == 'expired'%}
+<p class='w-11/12 bg-red-300 border-red-600 rounded-lg py-1 px-3 m-2 mx-auto'>Expired OTP</p>
+{%  endif %}
+ 
+
+<form class="w-full mx-auto h-full py-10" method="post">
+  {% csrf_token %}
+
+  <img src="{% static 'registaration/images/img-02.png' %}" class="w-2/5 lg:w-1/5 mx-auto"/>
+  <div class="block w-4/5 md:w-3/5 lg:w-2/5 mx-auto px-3 py-1 mt-3 text-gray-700 text-center">Enter OTP to activate account</div>
+  <input class="block w-4/5 md:w-3/5 lg:w-2/5 mx-auto px-3 py-1 mt-3 bg-gray-100" type='number' plaseholder='OTP' name='OTP'>
+  <input class="block w-4/5 md:w-3/5 lg:w-2/5 mx-auto px-3 py-1 m-3 bg-green-500 text-white border-2 border-white hover:border-gray-200" type="submit" value="Confirm Email" maxlength="8">
+  <a href='' class="block w-4/5 md:w-3/5 lg:w-2/5 mx-auto px-3 py-1 mt-3 text-gray-700 text-center hover:text-gray-500 ">Resent OTP to .........</a>
+{% comment %} resend otp and count entering {% endcomment %}
+</form>
+
+
+  
+
+{% endblock %}
