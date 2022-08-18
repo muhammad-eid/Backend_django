@@ -28,6 +28,7 @@ class Key(models.Model):
     type    = models.CharField(max_length=10, default='Trail' )
     state   = models.CharField(max_length=12, default='Running')
     is_active  = models.BooleanField(default=True)###########
+    activated = models.BooleanField(default=False)# activated on SW
     duration = models.IntegerField(default=14)
     # img = models.ImageField(upload_to='images')
     # img = models.ImageField(upload_to='images/confirmation/', blank=True, null=True)

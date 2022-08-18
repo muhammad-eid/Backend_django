@@ -1,0 +1,40 @@
+{% extends "./base_mod_dashboard.html" %}
+
+{% block main_content %}
+
+  <section class="py-2">
+    <div class="bg-green-600 shadow-lg px-3 w-full font-bold text-white text-2xl">
+      Personal Data
+    </div>
+    <div class="md:grid grid-cols-2	gap-2 px-3 mt-2 pt-1">
+      <pre>Name   : {{user.first_name}} {{user.last_name}}</pre>
+      <pre>Joined : {{user.date_joined|date:"d/m/Y"}}</pre>
+      <pre>Phone  : {{user.phone}}</pre>
+      <pre>Company: {{user.company_name}}</pre>
+    </div>
+  </section>
+
+  <section class="py-2">
+    <div class="bg-green-600 shadow-lg px-3 w-full font-bold text-white text-2xl">
+      Keys Data
+    </div>
+    {% for key in keys %}
+    <div class="md:grid grid-cols-2	gap-2 px-3 mt-2 pt-1 border-2 rounded-md bg-blue-100">
+      <pre>Key   : {{key.key}}</pre>
+      <pre>Type  : {{key.type}}</pre>
+      <pre>State : {{key.state}}</pre>
+      <pre>Active: {{key.is_active}}</pre>
+      <pre>Duration : {{key.duration}}</pre>
+      <pre>Activated: {{key.reactivation_counts}} Times</pre>
+      <pre>Generated: {{key.gen_date|date:"h:iA d/m/Y"}}</pre>
+      {% if key.act_date is Null  %}
+      <pre>Activated: Not yet</pre>
+      {% else %}
+      <pre>Activated: {{key.act_date|date:"h:iA d/m/Y"}}</pre>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </section>
+  
+
+{% endblock main_content%}
