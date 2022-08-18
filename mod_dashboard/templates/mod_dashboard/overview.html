@@ -170,7 +170,7 @@
             <pre>Reactivation:{{key.reactivation_counts}} Times</pre>
             <pre onclick="show_section(event)">Message: {{key.message}}</pre>
             <pre onclick="show_section(event)">Note   : {{key.notes}}</pre>        
-            <pre onclick="show_section(event)">Image confirmation</pre>
+            <pre onclick="show_section_img(event)">Image confirmation</pre>
             
             <form method="post">
                 {% csrf_token %}
@@ -184,6 +184,30 @@
             </form>
             
         </div>
+
+        <section class="hidden bg-white m-3 md:mx-10 lg:mx-15  rounded-lg fixed top-20 left-0 md:left-10 bottom-20 right-0 md:right-10 opacity-95 h-8/10">
+            <div class="flex flex-row justify-between bg-gray-700 text-white p-1 md:p-2 lg:p-3 rounded-t-lg font-bold px-5 ">
+                <div onclick="hide_section_img(event)" class="bg-red-500 hover:bg-red-600 px-2 rounded-md">
+                    Close
+                </div>
+                <div>{{key.user.first_name}} {{key.user.last_name}}</div>
+                <div onclick="hide_section_img(event)" class="bg-green-500 hover:bg-green-600 px-2 rounded-md">
+                    <form method="post" >
+                        {% csrf_token %}
+                            <input type="hidden" name="confirm_purchased" value="{{key.id}}">
+                            <input type="submit" value="Confirm" />
+                    </form>
+                </div>
+                
+            </div>
+            {% if key.img_confirm_purchased %}
+                <img src={{key.img_confirm_purchased.url}} class="h-full mx-auto"/>
+            {% else %}
+                <div class="bg-red-200 boreder-2 border-red-300 text-gray-600 px-5 py-1 rounded-md font-bold">image not found</div>
+            {% endif %}
+
+        </section>
+
         <section class="hidden bg-white m-3 md:mx-10 lg:mx-15  rounded-lg fixed top-20 left-0 md:left-10 bottom-30 right-0 md:right-10 opacity-95">
             <div class="flex flex-row justify-between bg-gray-700 text-white p-1 md:p-2 lg:p-3 rounded-t-lg font-bold px-5 ">
                 <div>{{key.user.first_name}} {{key.user.last_name}}</div>
@@ -207,18 +231,11 @@
                 <textarea name="notes" rows="4" class="w-full" placeholder="Message">{{key.notes}}</textarea>
                 {% endif %}
 
-                {% comment %} <a href="{{MEDIA}}{{key.img_confirm_purchased}}"></a> {% endcomment %}
-                {% if key.img_confirm_purchased %}
-                    <img src={{key.img_confirm_purchased.url}}/>
-                {% else %}
-                    <div class="bg-red-200 boreder-2 border-red-300 text-gray-600 px-5 py-1 rounded-md font-bold">image not found</div>
-                {% endif %}
                 <input type="hidden" name="message_notes" value="{{key.id}}">
-                <input type="submit" value="Save" class="m-1 p-1 text-center block w-full md:w-1/2 bg-green-500 hover:bg-green-600 text-white font-bold"/>
-                <div onclick="hide_section(event)" class="m-1 p-1 text-center block w-full md:w-1/2 bg-red-500 hover:bg-red-600 text-white font-bold">Cancel</div>
+                <input type="submit" value="Save" class="m-1 p-1 text-center block w-full bg-green-500 hover:bg-green-600 text-white font-bold"/>
+                <div onclick="hide_section(event)" class=" m-1 p-1 text-center block w-full bg-red-500 hover:bg-red-600 text-white font-bold">Cancel</div>
             </form>
         </section>
-
     </div>
     <!-- md -->
     <div class="hidden md:grid grid-cols-5 gap-4 lg:hidden px-2" >
@@ -246,7 +263,7 @@
             <pre>Reactivation:{{key.reactivation_counts}} Times</pre>
             <pre onclick="show_section(event)">Message: {{key.message}}</pre>
             <pre onclick="show_section(event)">Note   : {{key.notes}}</pre>        
-            <pre onclick="show_section(event)">Image confirmation</pre>
+            <pre onclick="show_section_img(event)">Image confirmation</pre>
             
             <form method="post">
                 {% csrf_token %}
@@ -260,6 +277,30 @@
             </form>
             
         </div>
+
+        <section class="hidden bg-white m-3 md:mx-10 lg:mx-15  rounded-lg fixed top-10 left-0 md:left-10 bottom-10 right-0 md:right-10 opacity-95 h-8/10">
+            <div class="flex flex-row justify-between bg-gray-700 text-white p-1 md:p-2 lg:p-3 rounded-t-lg font-bold px-5 ">
+                <div onclick="hide_section_img(event)" class="bg-red-500 hover:bg-red-600 px-2 rounded-md">
+                    Close
+                </div>
+                <div>{{key.user.first_name}} {{key.user.last_name}}</div>
+                <div onclick="hide_section_img(event)" class="bg-green-500 hover:bg-green-600 px-2 rounded-md">
+                    <form method="post" >
+                        {% csrf_token %}
+                            <input type="hidden" name="confirm_purchased" value="{{key.id}}">
+                            <input type="submit" value="Confirm" />
+                    </form>
+                </div>
+                
+            </div>
+            {% if key.img_confirm_purchased %}
+                <img src={{key.img_confirm_purchased.url}} class="h-full mx-auto"/>
+            {% else %}
+                <div class="bg-red-200 boreder-2 border-red-300 text-gray-600 px-5 py-1 rounded-md font-bold">image not found</div>
+            {% endif %}
+
+        </section>
+
         <section class="hidden bg-white m-3 md:mx-10 lg:mx-15  rounded-lg fixed top-20 left-0 md:left-10 bottom-30 right-0 md:right-10 opacity-95">
             <div class="flex flex-row justify-between bg-gray-700 text-white p-1 md:p-2 lg:p-3 rounded-t-lg font-bold px-5 ">
                 <div>{{key.user.first_name}} {{key.user.last_name}}</div>
@@ -283,15 +324,9 @@
                 <textarea name="notes" rows="4" class="w-full" placeholder="Message">{{key.notes}}</textarea>
                 {% endif %}
 
-                {% comment %} <a href="{{MEDIA}}{{key.img_confirm_purchased}}"></a> {% endcomment %}
-                {% if key.img_confirm_purchased %}
-                    <img src={{key.img_confirm_purchased.url}}/>
-                {% else %}
-                    <div class="bg-red-200 boreder-2 border-red-300 text-gray-600 px-5 py-1 rounded-md font-bold">image not found</div>
-                {% endif %}
                 <input type="hidden" name="message_notes" value="{{key.id}}">
-                <input type="submit" value="Save" class="m-1 p-1 text-center block w-full md:w-1/2 bg-green-500 hover:bg-green-600 text-white font-bold"/>
-                <div onclick="hide_section(event)" class="m-1 p-1 text-center block w-full md:w-1/2 bg-red-500 hover:bg-red-600 text-white font-bold">Cancel</div>
+                <input type="submit" value="Save" class="m-1 p-1 text-center block w-full bg-green-500 hover:bg-green-600 text-white font-bold"/>
+                <div onclick="hide_section(event)" class=" m-1 p-1 text-center block w-full bg-red-500 hover:bg-red-600 text-white font-bold">Cancel</div>
             </form>
         </section>
     </div>
@@ -323,8 +358,8 @@
             <pre>Reactivation:{{key.reactivation_counts}} Times</pre>
             <pre onclick="show_section(event)">Message: {{key.message}}</pre>
             <pre onclick="show_section(event)">Note   : {{key.notes}}</pre>        
-            <pre onclick="show_section(event)">Image confirmation</pre>
-            <pre class="col-start-1	text-center block w-full bg-green-500 hover:bg-green-600 text-white font-bold" onclick="show_section(event)">Open</pre>
+            <pre onclick="show_section_img(event)">Image confirmation</pre>
+            <pre class="col-start-1	text-center block w-full bg-green-500 hover:bg-green-600 text-white font-bold" onclick="show_section_img(event)">Open</pre>
             
             <form method="post">
                 {% csrf_token %}
@@ -338,6 +373,30 @@
             </form>
             
         </div>
+
+        <section class="hidden bg-white m-3 md:mx-10 lg:mx-15  rounded-lg fixed top-10 left-0 md:left-10 bottom-10 right-0 md:right-10 opacity-95 h-8/10">
+            <div class="flex flex-row justify-between bg-gray-700 text-white p-1 md:p-2 lg:p-3 rounded-t-lg font-bold px-5 ">
+                <div onclick="hide_section_img(event)" class="bg-red-500 hover:bg-red-600 px-2 rounded-md">
+                    Close
+                </div>
+                <div>{{key.user.first_name}} {{key.user.last_name}}</div>
+                <div onclick="hide_section_img(event)" class="bg-green-500 hover:bg-green-600 px-2 rounded-md">
+                    <form method="post" >
+                        {% csrf_token %}
+                            <input type="hidden" name="confirm_purchased" value="{{key.id}}">
+                            <input type="submit" value="Confirm" />
+                    </form>
+                </div>
+                
+            </div>
+            {% if key.img_confirm_purchased %}
+                <img src={{key.img_confirm_purchased.url}} class="h-full mx-auto"/>
+            {% else %}
+                <div class="bg-red-200 boreder-2 border-red-300 text-gray-600 px-5 py-1 rounded-md font-bold">image not found</div>
+            {% endif %}
+
+        </section>
+
         <section class="hidden bg-white m-3 md:mx-10 lg:mx-15  rounded-lg fixed top-20 left-0 md:left-10 bottom-30 right-0 md:right-10 opacity-95">
             <div class="flex flex-row justify-between bg-gray-700 text-white p-1 md:p-2 lg:p-3 rounded-t-lg font-bold px-5 ">
                 <div>{{key.user.first_name}} {{key.user.last_name}}</div>
@@ -361,19 +420,13 @@
                 <textarea name="notes" rows="4" class="w-full" placeholder="Message">{{key.notes}}</textarea>
                 {% endif %}
 
-                {% comment %} <a href="{{MEDIA}}{{key.img_confirm_purchased}}"></a> {% endcomment %}
-                {% if key.img_confirm_purchased %}
-                    <img src={{key.img_confirm_purchased.url}}/>
-                {% else %}
-                    <div class="bg-red-200 boreder-2 border-red-300 text-gray-600 px-5 py-1 rounded-md font-bold">image not found</div>
-                {% endif %}
                 <input type="hidden" name="message_notes" value="{{key.id}}">
-                <input type="submit" value="Save" class="m-1 p-1 text-center block w-full md:w-1/2 bg-green-500 hover:bg-green-600 text-white font-bold"/>
-                <div onclick="hide_section(event)" class="m-1 p-1 text-center block w-full md:w-1/2 bg-red-500 hover:bg-red-600 text-white font-bold">Cancel</div>
+                <input type="submit" value="Save" class="m-1 p-1 text-center block w-full bg-green-500 hover:bg-green-600 text-white font-bold"/>
+                <div onclick="hide_section(event)" class=" m-1 p-1 text-center block w-full bg-red-500 hover:bg-red-600 text-white font-bold">Cancel</div>
             </form>
         </section>
+        
     </div>
-
 
 {% endfor %}
 
@@ -386,29 +439,74 @@
 
 {% block content3_header %}Gift Keys Request{% endblock content3_header %}
 {% block content3%}
-<div class="grid grid-cols-3 md:grid-cols-5 lg:grid-cols-6 gap-4">
-    <div class="bg-red-100">Name</div>
-    <div>Key</div>
-    <div>type</div>
-    <div>state</div>
-    <div>activated</div>
-    <div>duration</div>
-    <div>gen_date</div>
-    <div>act_date</div>
-
-    <div>img_confirm_purchased</div>
-    <div>last_check_date</div>
-    <div>os_version</div>
-    <div>sw_version</div>
-    <div>reactivation_counts</div>
-    <div>message</div>
-    <div>notes</div>
-
-    <div>email</div>
-    <div>phone</div>
-    <div>company_name</div>
-    <div>date_joined</div>
-
-
+<!-- header -->
+<!-- sm -->
+<div class="grid grid-cols-3 gap-4 md:hidden bg-indigo-500 text-white font-bold px-1">
+    <div>Name</div>
+    <div>Email</div>
 </div>
+<!-- md -->
+<!-- lg -->
+<div class="hidden md:grid grid-cols-5 gap-4 bg-indigo-500 text-white font-bold px-2">
+    <div>Name</div>
+    <div>Email</div>
+    <div>Phone</div>
+    <div>Company</div>
+    <div>Joined</div>
+</div>
+
+
+
+<!-- body -->
+{% for gift in gift_keys_to_activate %}
+    <!-- sm -->
+    <div class="grid grid-cols-2 gap-4 md:hidden px-1" >
+        <div onclick="show_hide_div_last(event)">{{gift.user.first_name}} {{gift.user.last_name}}</div>
+        <div>{{gift.user.email}}</div>
+        <div class="bg-gray-100 text-gray-700 font-normal col-span-3 grid-cols-1 gap-4 p-5" style="display:none;">
+            <div>Phone  : {{gift.user.phone}}</div>
+            <pre>Company: {{gift.user.company_name}}</pre>
+            <pre>Joined : {{gift.user.date_joined|date:"H:i d/m/Y"}}</pre>
+            <pre>Created: {{gift.created_at|date:"H:i d/m/Y"}}</pre>
+            <pre>Message: {{gift.body}}</pre>
+          
+            <form method="post">
+                {% csrf_token %}
+                <input type="hidden" name="confirm_gift" value="{{gift.id}}">
+                <input type="submit" value="Confirm" class=" block w-full bg-green-500 hover:bg-green-600 text-white font-bold"/>
+            </form>
+            <form method="post">
+                {% csrf_token %}
+                <input type="hidden" name="reject_gift" value="{{gift.id}}">
+                <input type="submit" value="Reject" class="block w-full bg-red-500 hover:bg-red-600 text-white font-bold"/>
+            </form>
+        </div>
+    </div>
+    <!-- md -->
+    <!-- lg -->
+    <div class="hidden md:grid grid-cols-5 gap-2 font-normal font-bold my-5 px-3"  >
+        <div onclick="show_hide_div_last(event)">{{gift.user.first_name}} {{gift.user.last_name}}</div>
+        <div>{{gift.user.email}}</div>
+        <div>{{gift.user.phone}}</div>
+        <pre>{{gift.user.company_name}}</pre>
+        <pre>{{gift.user.date_joined|date:"H:i d/m/Y"}}</pre>
+        <div class="bg-gray-100 text-gray-700 font-normal col-span-5 grid-cols-1 gap-4 p-5" style="display:none;">
+            <pre>Created: {{gift.created_at|date:"H:i d/m/Y"}}</pre>
+            <pre>Message: {{gift.body}}</pre>
+          
+            <form method="post">
+                {% csrf_token %}
+                <input type="hidden" name="confirm_gift" value="{{gift.id}}">
+                <input type="hidden" name="user_id" value="{{gift.user.id}}">
+                <input type="submit" value="Confirm" class=" block w-full bg-green-500 hover:bg-green-600 text-white font-bold"/>
+            </form>
+            <form method="post">
+                {% csrf_token %}
+                <input type="hidden" name="reject_gift" value="{{gift.id}}">
+                <input type="submit" value="Reject" class="block w-full bg-red-500 hover:bg-red-600 text-white font-bold"/>
+            </form>
+        </div>
+    </div>
+
+{% endfor %}
 {% endblock content3%}

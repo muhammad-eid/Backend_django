@@ -11,6 +11,8 @@ from account.models import User
 from dashboard.models import Key, GiftMessage
 from project import settings
 
+from dashboard import gen_key
+
 
 @login_required
 def mod_dashboard_overview(request):
@@ -39,7 +41,25 @@ def mod_dashboard_overview(request):
             key.notes = request.POST['notes']
             key.save()
         except Exception as e:
-            print('reject_purchased exception>> ', e)
+            print('message_notes exception>> ', e)
+
+        
+        try:
+            print('aaaaaaaaaaaaa>>>>>>', User.objects.get(id=request.POST['user_id']))
+            user = User.objects.get(id=request.POST['user_id'])
+            gen_key.gen_gift(user=user)
+            gift = GiftMessage.objects.get(id=request.POST['confirm_gift']) 
+            gift.delete()
+        except Exception as e:
+            print('confirm_gift exception>> ', e)
+
+
+        try:
+            gift = GiftMessage.objects.get(id=request.POST['reject_gift']) 
+            gift.delete()
+        except Exception as e:
+            print('reject_gift exception>> ', e)
+
 
 
 
@@ -87,8 +107,9 @@ def mod_dashboard_overview(request):
         'purchased_keys_to_activate': Key.objects.all().filter(type='Purchased').filter(state='Waiting'),
         'gift_keys_to_activate': GiftMessage.objects.all()
     }
-    # for key in context['purchased_keys_to_activate']:
-        # print('>>>>>>>>>>>>>>>>>>>>>>>>>',key.img_confirm_purchased.url )
+    # for gift in context['gift_keys_to_activate']:
+    #     print('>>>>>>>>>>>>>>>>>>>>>>>>>',gift.user.id )
+        # print(context['gift_keys_to_activate'])
     return render(request, 'mod_dashboard/overview.html', context)
 
 

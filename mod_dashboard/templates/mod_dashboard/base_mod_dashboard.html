@@ -78,12 +78,20 @@
 	
 
 <script>
-    const show_hide_div = (event) =>{
-        if(event.target.parentElement.children[event.target.parentElement.children.length-2].style.display == 'none'){
-            event.target.parentElement.children[event.target.parentElement.children.length-2].style.display = 'grid'
+    const show_hide_div_last = (event) =>{
+        if(event.target.parentElement.children[event.target.parentElement.children.length-1].style.display == 'none'){
+            event.target.parentElement.children[event.target.parentElement.children.length-1].style.display = 'grid'
         }
-        else if(event.target.parentElement.children[event.target.parentElement.children.length-2].style.display == 'grid'){
-            event.target.parentElement.children[event.target.parentElement.children.length-2].style.display = 'none'
+        else if(event.target.parentElement.children[event.target.parentElement.children.length-1].style.display == 'grid'){
+            event.target.parentElement.children[event.target.parentElement.children.length-1].style.display = 'none'
+        }
+    }
+    const show_hide_div = (event) =>{
+        if(event.target.parentElement.children[event.target.parentElement.children.length-3].style.display == 'none'){
+            event.target.parentElement.children[event.target.parentElement.children.length-3].style.display = 'grid'
+        }
+        else if(event.target.parentElement.children[event.target.parentElement.children.length-3].style.display == 'grid'){
+            event.target.parentElement.children[event.target.parentElement.children.length-3].style.display = 'none'
         }
     }
 
@@ -94,6 +102,15 @@
     }
     const show_section = (event) =>{
         event.target.parentElement.parentElement.children[event.target.parentElement.parentElement.children.length-1].style.display = 'block'
+    }
+
+    const hide_section_img = (event)=>{
+        console.log(event.target.parentElement.children)
+
+        event.target.parentElement.parentElement.style.display = 'none'
+    }
+    const show_section_img = (event) =>{
+        event.target.parentElement.parentElement.children[event.target.parentElement.parentElement.children.length-2].style.display = 'block'
     }
 </script>
 </body>
