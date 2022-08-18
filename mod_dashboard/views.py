@@ -19,7 +19,29 @@ def mod_dashboard_overview(request):
         return redirect('/dashboard/')
 
     if request.method=='POST':
-        pass
+        try:
+            key = Key.objects.get(id=request.POST['confirm_purchased']) 
+            key.state = "Running"
+            key.save()
+        except Exception as e:
+            print('confirm_purchased exception>> ' ,e)
+        
+        try:
+            key = Key.objects.get(id=request.POST['reject_purchased']) 
+            key.state = "Suspended"
+            key.save()
+        except Exception as e:
+            print('reject_purchased exception>> ', e)
+        
+        try:
+            key = Key.objects.get(id=request.POST['message_notes']) 
+            key.message = request.POST['message']
+            key.notes = request.POST['notes']
+            key.save()
+        except Exception as e:
+            print('reject_purchased exception>> ', e)
+
+
 
 
     current_month = str(datetime.datetime.now().month).zfill
@@ -65,7 +87,8 @@ def mod_dashboard_overview(request):
         'purchased_keys_to_activate': Key.objects.all().filter(type='Purchased').filter(state='Waiting'),
         'gift_keys_to_activate': GiftMessage.objects.all()
     }
-    print(context['statistic']['ram_usage'])
+    # for key in context['purchased_keys_to_activate']:
+        # print('>>>>>>>>>>>>>>>>>>>>>>>>>',key.img_confirm_purchased.url )
     return render(request, 'mod_dashboard/overview.html', context)
 
 
