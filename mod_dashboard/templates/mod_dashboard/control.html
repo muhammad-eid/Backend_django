@@ -1,1 +1,665 @@
+{% extends "./base_mod_dashboard.html" %}
+
+
 {% block title %}Estidama{% endblock %}
+
+{% block content1_header %}
+<form method="post" class="flex flex-row justify-center	">
+    {% csrf_token %}
+    <input type="search" placeholder="Search" name="search" class="w-8/12 px-3 text-gray-600" />
+    <input type="submit" value="Search" class=" block w-3/12 bg-green-500 hover:bg-green-600 text-white font-bold "/>
+</form>
+{% endblock content1_header %}
+
+{% block content1 %}
+{% if is_search %}
+
+<!-- header -->
+<!-- sm -->
+<div class="grid grid-cols-3 gap-4 md:hidden bg-indigo-500 text-white font-bold px-1">
+    <div>Name</div>
+    <div>Key</div>
+    <div>Activated</div>
+</div>
+<!-- md -->
+<div class="hidden md:grid grid-cols-5 gap-4 lg:hidden bg-indigo-500 text-white font-bold px-2">
+    <div>Name</div>
+    <div>Key</div>
+    <div>Activated</div>
+    <div>Generated Date</div>
+    <div>Activated Date</div>
+</div>
+<!-- lg -->
+<div class="hidden lg:grid grid-cols-6 gap-4 bg-indigo-500 text-white font-bold px-3">
+    <div>Name</div>
+    <div>Key</div>
+    <div>Type</div>
+    <div>Activated</div>
+    <div>Generated Date</div>
+    <div>Activated Date</div>
+</div>
+
+
+
+
+<!-- body -->
+<!-- sm -->
+{% for key in search %}
+
+<div class="grid grid-cols-3 gap-4 md:hidden px-1" >
+    <div onclick="show_hide_div(event)">{{key.user.first_name}} {{key.user.last_name}}</div>
+    <div>{{key.key}}</div>
+    <div>{{key.activated}}</div>
+    <div class="bg-gray-100 text-gray-700 font-normal col-span-3 grid-cols-1 gap-4 p-5" style="display:none;">
+        <pre>Emial: {{key.user.email}}</pre>
+        <pre>Phone: {{key.user.phone}}</pre>
+
+        <pre>Company: {{key.user.company_name}}</pre>
+        <pre>Joined : {{key.user.date_joined|date:"H:i d/m/Y"}}</pre>
+        
+        <pre>Key Type : {{key.type}}</pre>
+        <pre>Key State: {{key.state}}</pre>
+
+        <pre>Generated Date:{{key.gen_date|date:"H:i d/m/Y"}}</pre>
+        <pre>Activated Date:{{key.act_date|date:"H:i d/m/Y"}}</pre>
+
+        <pre>OS Version: {{key.os_version}}</pre>
+        <pre>SW Version: {{key.sw_version}}</pre>
+        
+        <pre>Duration  : {{key.duration}} Days</pre>
+        <pre>Last Check: {{key.last_check_date}}</pre>
+
+        <pre>Reactivation:{{key.reactivation_counts}} Times</pre>
+        <pre onclick="show_section(event)">Message: {{key.message}}</pre>
+        <pre onclick="show_section(event)">Note   : {{key.notes}}</pre>        
+        <pre onclick="show_section_img(event)">Image confirmation</pre>
+        
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="confirm_purchased" value="{{key.id}}">
+            <input type="submit" value="Confirm" class=" block w-full bg-green-500 hover:bg-green-600 text-white font-bold"/>
+        </form>
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="reject_purchased" value="{{key.id}}">
+            <input type="submit" value="Reject" class="block w-full bg-red-500 hover:bg-red-600 text-white font-bold"/>
+        </form>
+    </div>
+
+    <section class="hidden bg-white m-3 md:mx-10 lg:mx-15  rounded-lg fixed top-20 left-0 md:left-10 bottom-20 right-0 md:right-10 opacity-95 h-8/10">
+        <div class="flex flex-row justify-between bg-gray-700 text-white p-1 md:p-2 lg:p-3 rounded-t-lg font-bold px-5 ">
+            <div onclick="hide_section_img(event)" class="bg-red-500 hover:bg-red-600 px-2 rounded-md">
+                Close
+            </div>
+            <div>{{key.user.first_name}} {{key.user.last_name}}</div>
+            <div onclick="hide_section_img(event)" class="bg-green-500 hover:bg-green-600 px-2 rounded-md">
+                <form method="post" >
+                    {% csrf_token %}
+                        <input type="hidden" name="confirm_purchased" value="{{key.id}}">
+                        <input type="submit" value="Confirm" />
+                </form>
+            </div>
+            
+        </div>
+        {% if key.img_confirm_purchased %}
+            <img src={{key.img_confirm_purchased.url}} class="h-full mx-auto"/>
+        {% else %}
+            <div class="bg-red-200 boreder-2 border-red-300 text-gray-600 px-5 py-1 rounded-md font-bold">image not found</div>
+        {% endif %}
+
+    </section>
+
+    <section class="hidden bg-white m-3 md:mx-10 lg:mx-15  rounded-lg fixed top-20 left-0 md:left-10 bottom-30 right-0 md:right-10 opacity-95">
+        <div class="flex flex-row justify-between bg-gray-700 text-white p-1 md:p-2 lg:p-3 rounded-t-lg font-bold px-5 ">
+            <div>{{key.user.first_name}} {{key.user.last_name}}</div>
+            <div onclick="hide_section(event)" class="bg-red-500 hover:bg-red-600 px-2 rounded-xl">
+                X
+            </div>
+        </div>
+        <form method="post" class="p-2 md:p-4 lg:p-6">
+            {% csrf_token %}
+            <label>Message</label>
+            {% if key.message is None %}
+            <textarea name="message" rows="4" class="w-full" placeholder="Message"></textarea>
+            {% else %}
+            <textarea name="message" rows="4" class="w-full" placeholder="Message">{{key.message}}</textarea>
+            {% endif %}
+            
+            <label>Note</label>
+            {% if key.notes is None %}
+            <textarea name="notes" rows="4" class="w-full" placeholder="Message"></textarea>
+            {% else %}
+            <textarea name="notes" rows="4" class="w-full" placeholder="Message">{{key.notes}}</textarea>
+            {% endif %}
+
+            <input type="hidden" name="message_notes" value="{{key.id}}">
+            <input type="submit" value="Save" class="m-1 p-1 text-center block w-full bg-green-500 hover:bg-green-600 text-white font-bold"/>
+            <div onclick="hide_section(event)" class=" m-1 p-1 text-center block w-full bg-red-500 hover:bg-red-600 text-white font-bold">Cancel</div>
+        </form>
+    </section>
+</div>
+<!-- md -->
+<div class="hidden md:grid grid-cols-5 gap-4 lg:hidden px-2" >
+    <div onclick="show_hide_div(event)">{{key.user.first_name}} {{key.user.last_name}}</div>
+    <div>{{key.key}}</div>
+    <div>{{key.activated}}</div>
+    <div>{{key.gen_date|date:"H:i d/m/Y"}}</div>
+    <div>{{key.act_date|date:"H:i d/m/Y"}}</div>
+    <div class="bg-gray-100 text-gray-700 font-normal col-span-5 grid-cols-2 gap-4 p-5" style="display:none;">
+        <pre>Emial: {{key.user.email}}</pre>
+        <pre>Phone: {{key.user.phone}}</pre>
+
+        <pre>Company: {{key.user.company_name}}</pre>
+        <pre>Joined : {{key.user.date_joined|date:"H:i d/m/Y"}}</pre>
+        
+        <pre>Key Type : {{key.type}}</pre>
+        <pre>Key State: {{key.state}}</pre>
+
+        <pre>OS Version: {{key.os_version}}</pre>
+        <pre>SW Version: {{key.sw_version}}</pre>
+        
+        <pre>Duration  : {{key.duration}} Days</pre>
+        <pre>Last Check: {{key.last_check_date}}</pre>
+
+        <pre>Reactivation:{{key.reactivation_counts}} Times</pre>
+        <pre onclick="show_section(event)">Message: {{key.message}}</pre>
+        <pre onclick="show_section(event)">Note   : {{key.notes}}</pre>        
+        <pre onclick="show_section_img(event)">Image confirmation</pre>
+        
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="confirm_purchased" value="{{key.id}}">
+            <input type="submit" value="Confirm" class=" block w-full bg-green-500 hover:bg-green-600 text-white font-bold"/>
+        </form>
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="reject_purchased" value="{{key.id}}">
+            <input type="submit" value="Reject" class="block w-full bg-red-500 hover:bg-red-600 text-white font-bold"/>
+        </form>
+        
+    </div>
+
+    <section class="hidden bg-white m-3 md:mx-10 lg:mx-15  rounded-lg fixed top-10 left-0 md:left-10 bottom-10 right-0 md:right-10 opacity-95 h-8/10">
+        <div class="flex flex-row justify-between bg-gray-700 text-white p-1 md:p-2 lg:p-3 rounded-t-lg font-bold px-5 ">
+            <div onclick="hide_section_img(event)" class="bg-red-500 hover:bg-red-600 px-2 rounded-md">
+                Close
+            </div>
+            <div>{{key.user.first_name}} {{key.user.last_name}}</div>
+            <div onclick="hide_section_img(event)" class="bg-green-500 hover:bg-green-600 px-2 rounded-md">
+                <form method="post" >
+                    {% csrf_token %}
+                        <input type="hidden" name="confirm_purchased" value="{{key.id}}">
+                        <input type="submit" value="Confirm" />
+                </form>
+            </div>
+            
+        </div>
+        {% if key.img_confirm_purchased %}
+            <img src={{key.img_confirm_purchased.url}} class="h-full mx-auto"/>
+        {% else %}
+            <div class="bg-red-200 boreder-2 border-red-300 text-gray-600 px-5 py-1 rounded-md font-bold">image not found</div>
+        {% endif %}
+
+    </section>
+
+    <section class="hidden bg-white m-3 md:mx-10 lg:mx-15  rounded-lg fixed top-20 left-0 md:left-10 bottom-30 right-0 md:right-10 opacity-95">
+        <div class="flex flex-row justify-between bg-gray-700 text-white p-1 md:p-2 lg:p-3 rounded-t-lg font-bold px-5 ">
+            <div>{{key.user.first_name}} {{key.user.last_name}}</div>
+            <div onclick="hide_section(event)" class="bg-red-500 hover:bg-red-600 px-2 rounded-xl">
+                X
+            </div>
+        </div>
+        <form method="post" class="p-2 md:p-4 lg:p-6">
+            {% csrf_token %}
+            <label>Message</label>
+            {% if key.message is None %}
+            <textarea name="message" rows="4" class="w-full" placeholder="Message"></textarea>
+            {% else %}
+            <textarea name="message" rows="4" class="w-full" placeholder="Message">{{key.message}}</textarea>
+            {% endif %}
+            
+            <label>Note</label>
+            {% if key.notes is None %}
+            <textarea name="notes" rows="4" class="w-full" placeholder="Message"></textarea>
+            {% else %}
+            <textarea name="notes" rows="4" class="w-full" placeholder="Message">{{key.notes}}</textarea>
+            {% endif %}
+
+            <input type="hidden" name="message_notes" value="{{key.id}}">
+            <input type="submit" value="Save" class="m-1 p-1 text-center block w-full bg-green-500 hover:bg-green-600 text-white font-bold"/>
+            <div onclick="hide_section(event)" class=" m-1 p-1 text-center block w-full bg-red-500 hover:bg-red-600 text-white font-bold">Cancel</div>
+        </form>
+    </section>
+</div>
+
+<!-- lg -->
+<div class="hidden lg:grid grid-cols-6 gap-2 font-normal font-bold my-5 px-3"  >
+    <div onclick="show_hide_div(event)">{{key.user.first_name}} {{key.user.last_name}}</div>
+    <div>{{key.key}}</div>
+    <div>{{key.type}}</div>
+    <div>{{key.activated}}</div>
+    <div>{{key.gen_date|date:"H:i d/m/Y"}}</div>
+    <div>{{key.act_date|date:"H:i d/m/Y"}}</div>
+    <div class="bg-gray-100 text-gray-700 font-normal col-span-6 grid-cols-3 gap-4 p-5" style="display:none;">
+        <pre>Emial: {{key.user.email}}</pre>
+        <pre>Phone: {{key.user.phone}}</pre>
+
+        <pre>Company: {{key.user.company_name}}</pre>
+        <pre>Joined : {{key.user.date_joined|date:"H:i d/m/Y"}}</pre>
+        
+        <pre>Key Type : </pre>
+        <pre>Key State: {{key.state}}</pre>
+
+        <pre>OS Version: {{key.os_version}}</pre>
+        <pre>SW Version: {{key.sw_version}}</pre>
+        
+        <pre>Duration  : {{key.duration}} Days</pre>
+        <pre>Last Check: {{key.last_check_date}}</pre>
+
+        <pre>Reactivation:{{key.reactivation_counts}} Times</pre>
+        <pre onclick="show_section(event)">Message: {{key.message}}</pre>
+        <pre onclick="show_section(event)">Note   : {{key.notes}}</pre>        
+        <pre onclick="show_section_img(event)">Image confirmation</pre>
+        <pre class="col-start-1	text-center block w-full bg-green-500 hover:bg-green-600 text-white font-bold" onclick="show_section_img(event)">Open</pre>
+        
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="reject_purchased" value="{{key.id}}">
+            <input type="submit" value="Reject" class="block w-full bg-red-500 hover:bg-red-600 text-white font-bold"/>
+        </form>
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="confirm_purchased" value="{{key.id}}">
+            <input type="submit" value="Confirm" class=" block w-full bg-green-500 hover:bg-green-600 text-white font-bold"/>
+        </form>
+        
+    </div>
+
+    <section class="hidden bg-white m-3 md:mx-10 lg:mx-15  rounded-lg fixed top-10 left-0 md:left-10 bottom-10 right-0 md:right-10 opacity-95 h-8/10">
+        <div class="flex flex-row justify-between bg-gray-700 text-white p-1 md:p-2 lg:p-3 rounded-t-lg font-bold px-5 ">
+            <div onclick="hide_section_img(event)" class="bg-red-500 hover:bg-red-600 px-2 rounded-md">
+                Close
+            </div>
+            <div>{{key.user.first_name}} {{key.user.last_name}}</div>
+            <div onclick="hide_section_img(event)" class="bg-green-500 hover:bg-green-600 px-2 rounded-md">
+                <form method="post" >
+                    {% csrf_token %}
+                        <input type="hidden" name="confirm_purchased" value="{{key.id}}">
+                        <input type="submit" value="Confirm" />
+                </form>
+            </div>
+            
+        </div>
+        {% if key.img_confirm_purchased %}
+            <img src={{key.img_confirm_purchased.url}} class="h-full mx-auto"/>
+        {% else %}
+            <div class="bg-red-200 boreder-2 border-red-300 text-gray-600 px-5 py-1 rounded-md font-bold">image not found</div>
+        {% endif %}
+
+    </section>
+
+    <section class="hidden bg-white m-3 md:mx-10 lg:mx-15  rounded-lg fixed top-20 left-0 md:left-10 bottom-30 right-0 md:right-10 opacity-95">
+        <div class="flex flex-row justify-between bg-gray-700 text-white p-1 md:p-2 lg:p-3 rounded-t-lg font-bold px-5 ">
+            <div>{{key.user.first_name}} {{key.user.last_name}}</div>
+            <div onclick="hide_section(event)" class="bg-red-500 hover:bg-red-600 px-2 rounded-xl">
+                X
+            </div>
+        </div>
+        <form method="post" class="p-2 md:p-4 lg:p-6">
+            {% csrf_token %}
+            <label>Message</label>
+            {% if key.message is None %}
+            <textarea name="message" rows="4" class="w-full" placeholder="Message"></textarea>
+            {% else %}
+            <textarea name="message" rows="4" class="w-full" placeholder="Message">{{key.message}}</textarea>
+            {% endif %}
+            
+            <label>Note</label>
+            {% if key.notes is None %}
+            <textarea name="notes" rows="4" class="w-full" placeholder="Message"></textarea>
+            {% else %}
+            <textarea name="notes" rows="4" class="w-full" placeholder="Message">{{key.notes}}</textarea>
+            {% endif %}
+
+            <input type="hidden" name="message_notes" value="{{key.id}}">
+            <input type="submit" value="Save" class="m-1 p-1 text-center block w-full bg-green-500 hover:bg-green-600 text-white font-bold"/>
+            <div onclick="hide_section(event)" class=" m-1 p-1 text-center block w-full bg-red-500 hover:bg-red-600 text-white font-bold">Cancel</div>
+        </form>
+    </section>
+</div>
+{% endfor %}
+{% endif %}
+{% endblock content1%}
+
+
+
+
+
+{% block content2_header %}Settings{% endblock content2_header %}
+{% block content2 %}
+
+
+{% endblock content2%}
+
+
+
+
+
+
+{% block content3_header %}Keys Management{% endblock content3_header %}
+{% block content3%}
+<!-- header -->
+<!-- sm -->
+<div class="grid grid-cols-3 gap-4 md:hidden bg-indigo-500 text-white font-bold px-1">
+    <div>Name</div>
+    <div>Key</div>
+    <div>Activated</div>
+</div>
+<!-- md -->
+<div class="hidden md:grid grid-cols-5 gap-4 lg:hidden bg-indigo-500 text-white font-bold px-2">
+    <div>Name</div>
+    <div>Key</div>
+    <div>Activated</div>
+    <div>Generated Date</div>
+    <div>Activated Date</div>
+</div>
+<!-- lg -->
+<div class="hidden lg:grid grid-cols-6 gap-4 bg-indigo-500 text-white font-bold px-3">
+    <div>Name</div>
+    <div>Key</div>
+    <div>Type</div>
+    <div>Activated</div>
+    <div>Generated Date</div>
+    <div>Activated Date</div>
+</div>
+
+
+<!-- body -->
+{% for key in keys %}
+    <!-- sm -->
+    <div class="grid grid-cols-3 gap-4 md:hidden px-1" >
+        <div onclick="show_hide_div(event)">{{key.user.first_name}} {{key.user.last_name}}</div>
+        <div>{{key.key}}</div>
+        <div>{{key.activated}}</div>
+        <div class="bg-gray-100 text-gray-700 font-normal col-span-3 grid-cols-1 gap-4 p-5" style="display:none;">
+            <pre>Emial: {{key.user.email}}</pre>
+            <pre>Phone: {{key.user.phone}}</pre>
+
+            <pre>Company: {{key.user.company_name}}</pre>
+            <pre>Joined : {{key.user.date_joined|date:"H:i d/m/Y"}}</pre>
+            
+            <pre>Key Type : {{key.type}}</pre>
+            <pre>Key State: {{key.state}}</pre>
+
+            <pre>Generated Date:{{key.gen_date|date:"H:i d/m/Y"}}</pre>
+            <pre>Activated Date:{{key.act_date|date:"H:i d/m/Y"}}</pre>
+
+            <pre>OS Version: {{key.os_version}}</pre>
+            <pre>SW Version: {{key.sw_version}}</pre>
+            
+            <pre>Duration  : {{key.duration}} Days</pre>
+            <pre>Last Check: {{key.last_check_date}}</pre>
+
+            <pre>Reactivation:{{key.reactivation_counts}} Times</pre>
+            <pre onclick="show_section(event)">Message: {{key.message}}</pre>
+            <pre onclick="show_section(event)">Note   : {{key.notes}}</pre>        
+            <pre onclick="show_section_img(event)">Image confirmation</pre>
+            
+            <form method="post">
+                {% csrf_token %}
+                <input type="hidden" name="confirm_purchased" value="{{key.id}}">
+                <input type="submit" value="Confirm" class=" block w-full bg-green-500 hover:bg-green-600 text-white font-bold"/>
+            </form>
+            <form method="post">
+                {% csrf_token %}
+                <input type="hidden" name="reject_purchased" value="{{key.id}}">
+                <input type="submit" value="Reject" class="block w-full bg-red-500 hover:bg-red-600 text-white font-bold"/>
+            </form>
+            
+        </div>
+
+        <section class="hidden bg-white m-3 md:mx-10 lg:mx-15  rounded-lg fixed top-20 left-0 md:left-10 bottom-20 right-0 md:right-10 opacity-95 h-8/10">
+            <div class="flex flex-row justify-between bg-gray-700 text-white p-1 md:p-2 lg:p-3 rounded-t-lg font-bold px-5 ">
+                <div onclick="hide_section_img(event)" class="bg-red-500 hover:bg-red-600 px-2 rounded-md">
+                    Close
+                </div>
+                <div>{{key.user.first_name}} {{key.user.last_name}}</div>
+                <div onclick="hide_section_img(event)" class="bg-green-500 hover:bg-green-600 px-2 rounded-md">
+                    <form method="post" >
+                        {% csrf_token %}
+                            <input type="hidden" name="confirm_purchased" value="{{key.id}}">
+                            <input type="submit" value="Confirm" />
+                    </form>
+                </div>
+                
+            </div>
+            {% if key.img_confirm_purchased %}
+                <img src={{key.img_confirm_purchased.url}} class="h-full mx-auto"/>
+            {% else %}
+                <div class="bg-red-200 boreder-2 border-red-300 text-gray-600 px-5 py-1 rounded-md font-bold">image not found</div>
+            {% endif %}
+
+        </section>
+
+        <section class="hidden bg-white m-3 md:mx-10 lg:mx-15  rounded-lg fixed top-20 left-0 md:left-10 bottom-30 right-0 md:right-10 opacity-95">
+            <div class="flex flex-row justify-between bg-gray-700 text-white p-1 md:p-2 lg:p-3 rounded-t-lg font-bold px-5 ">
+                <div>{{key.user.first_name}} {{key.user.last_name}}</div>
+                <div onclick="hide_section(event)" class="bg-red-500 hover:bg-red-600 px-2 rounded-xl">
+                    X
+                </div>
+            </div>
+            <form method="post" class="p-2 md:p-4 lg:p-6">
+                {% csrf_token %}
+                <label>Message</label>
+                {% if key.message is None %}
+                <textarea name="message" rows="4" class="w-full" placeholder="Message"></textarea>
+                {% else %}
+                <textarea name="message" rows="4" class="w-full" placeholder="Message">{{key.message}}</textarea>
+                {% endif %}
+                
+                <label>Note</label>
+                {% if key.notes is None %}
+                <textarea name="notes" rows="4" class="w-full" placeholder="Message"></textarea>
+                {% else %}
+                <textarea name="notes" rows="4" class="w-full" placeholder="Message">{{key.notes}}</textarea>
+                {% endif %}
+
+                <input type="hidden" name="message_notes" value="{{key.id}}">
+                <input type="submit" value="Save" class="m-1 p-1 text-center block w-full bg-green-500 hover:bg-green-600 text-white font-bold"/>
+                <div onclick="hide_section(event)" class=" m-1 p-1 text-center block w-full bg-red-500 hover:bg-red-600 text-white font-bold">Cancel</div>
+            </form>
+        </section>
+    </div>
+    <!-- md -->
+    <div class="hidden md:grid grid-cols-5 gap-4 lg:hidden px-2" >
+        <div onclick="show_hide_div(event)">{{key.user.first_name}} {{key.user.last_name}}</div>
+        <div>{{key.key}}</div>
+        <div>{{key.activated}}</div>
+        <div>{{key.gen_date|date:"H:i d/m/Y"}}</div>
+        <div>{{key.act_date|date:"H:i d/m/Y"}}</div>
+        <div class="bg-gray-100 text-gray-700 font-normal col-span-5 grid-cols-2 gap-4 p-5" style="display:none;">
+            <pre>Emial: {{key.user.email}}</pre>
+            <pre>Phone: {{key.user.phone}}</pre>
+
+            <pre>Company: {{key.user.company_name}}</pre>
+            <pre>Joined : {{key.user.date_joined|date:"H:i d/m/Y"}}</pre>
+            
+            <pre>Key Type : {{key.type}}</pre>
+            <pre>Key State: {{key.state}}</pre>
+
+            <pre>OS Version: {{key.os_version}}</pre>
+            <pre>SW Version: {{key.sw_version}}</pre>
+            
+            <pre>Duration  : {{key.duration}} Days</pre>
+            <pre>Last Check: {{key.last_check_date}}</pre>
+
+            <pre>Reactivation:{{key.reactivation_counts}} Times</pre>
+            <pre onclick="show_section(event)">Message: {{key.message}}</pre>
+            <pre onclick="show_section(event)">Note   : {{key.notes}}</pre>        
+            <pre onclick="show_section_img(event)">Image confirmation</pre>
+            
+            <form method="post">
+                {% csrf_token %}
+                <input type="hidden" name="confirm_purchased" value="{{key.id}}">
+                <input type="submit" value="Confirm" class=" block w-full bg-green-500 hover:bg-green-600 text-white font-bold"/>
+            </form>
+            <form method="post">
+                {% csrf_token %}
+                <input type="hidden" name="reject_purchased" value="{{key.id}}">
+                <input type="submit" value="Reject" class="block w-full bg-red-500 hover:bg-red-600 text-white font-bold"/>
+            </form>
+            
+        </div>
+
+        <section class="hidden bg-white m-3 md:mx-10 lg:mx-15  rounded-lg fixed top-10 left-0 md:left-10 bottom-10 right-0 md:right-10 opacity-95 h-8/10">
+            <div class="flex flex-row justify-between bg-gray-700 text-white p-1 md:p-2 lg:p-3 rounded-t-lg font-bold px-5 ">
+                <div onclick="hide_section_img(event)" class="bg-red-500 hover:bg-red-600 px-2 rounded-md">
+                    Close
+                </div>
+                <div>{{key.user.first_name}} {{key.user.last_name}}</div>
+                <div onclick="hide_section_img(event)" class="bg-green-500 hover:bg-green-600 px-2 rounded-md">
+                    <form method="post" >
+                        {% csrf_token %}
+                            <input type="hidden" name="confirm_purchased" value="{{key.id}}">
+                            <input type="submit" value="Confirm" />
+                    </form>
+                </div>
+                
+            </div>
+            {% if key.img_confirm_purchased %}
+                <img src={{key.img_confirm_purchased.url}} class="h-full mx-auto"/>
+            {% else %}
+                <div class="bg-red-200 boreder-2 border-red-300 text-gray-600 px-5 py-1 rounded-md font-bold">image not found</div>
+            {% endif %}
+
+        </section>
+
+        <section class="hidden bg-white m-3 md:mx-10 lg:mx-15  rounded-lg fixed top-20 left-0 md:left-10 bottom-30 right-0 md:right-10 opacity-95">
+            <div class="flex flex-row justify-between bg-gray-700 text-white p-1 md:p-2 lg:p-3 rounded-t-lg font-bold px-5 ">
+                <div>{{key.user.first_name}} {{key.user.last_name}}</div>
+                <div onclick="hide_section(event)" class="bg-red-500 hover:bg-red-600 px-2 rounded-xl">
+                    X
+                </div>
+            </div>
+            <form method="post" class="p-2 md:p-4 lg:p-6">
+                {% csrf_token %}
+                <label>Message</label>
+                {% if key.message is None %}
+                <textarea name="message" rows="4" class="w-full" placeholder="Message"></textarea>
+                {% else %}
+                <textarea name="message" rows="4" class="w-full" placeholder="Message">{{key.message}}</textarea>
+                {% endif %}
+                
+                <label>Note</label>
+                {% if key.notes is None %}
+                <textarea name="notes" rows="4" class="w-full" placeholder="Message"></textarea>
+                {% else %}
+                <textarea name="notes" rows="4" class="w-full" placeholder="Message">{{key.notes}}</textarea>
+                {% endif %}
+
+                <input type="hidden" name="message_notes" value="{{key.id}}">
+                <input type="submit" value="Save" class="m-1 p-1 text-center block w-full bg-green-500 hover:bg-green-600 text-white font-bold"/>
+                <div onclick="hide_section(event)" class=" m-1 p-1 text-center block w-full bg-red-500 hover:bg-red-600 text-white font-bold">Cancel</div>
+            </form>
+        </section>
+    </div>
+
+    <!-- lg -->
+    <div class="hidden lg:grid grid-cols-6 gap-2 font-normal font-bold my-5 px-3"  >
+        <div onclick="show_hide_div(event)">{{key.user.first_name}} {{key.user.last_name}}</div>
+        <div>{{key.key}}</div>
+        <div>{{key.type}}</div>
+        <div>{{key.activated}}</div>
+        <div>{{key.gen_date|date:"H:i d/m/Y"}}</div>
+        <div>{{key.act_date|date:"H:i d/m/Y"}}</div>
+        <div class="bg-gray-100 text-gray-700 font-normal col-span-6 grid-cols-3 gap-4 p-5" style="display:none;">
+            <pre>Emial: {{key.user.email}}</pre>
+            <pre>Phone: {{key.user.phone}}</pre>
+
+            <pre>Company: {{key.user.company_name}}</pre>
+            <pre>Joined : {{key.user.date_joined|date:"H:i d/m/Y"}}</pre>
+            
+            <pre>Key Type : </pre>
+            <pre>Key State: {{key.state}}</pre>
+
+            <pre>OS Version: {{key.os_version}}</pre>
+            <pre>SW Version: {{key.sw_version}}</pre>
+            
+            <pre>Duration  : {{key.duration}} Days</pre>
+            <pre>Last Check: {{key.last_check_date}}</pre>
+
+            <pre>Reactivation:{{key.reactivation_counts}} Times</pre>
+            <pre onclick="show_section(event)">Message: {{key.message}}</pre>
+            <pre onclick="show_section(event)">Note   : {{key.notes}}</pre>        
+            <pre onclick="show_section_img(event)">Image confirmation</pre>
+            <pre class="col-start-1	text-center block w-full bg-green-500 hover:bg-green-600 text-white font-bold" onclick="show_section_img(event)">Open</pre>
+            
+            <form method="post">
+                {% csrf_token %}
+                <input type="hidden" name="reject_purchased" value="{{key.id}}">
+                <input type="submit" value="Reject" class="block w-full bg-red-500 hover:bg-red-600 text-white font-bold"/>
+            </form>
+            <form method="post">
+                {% csrf_token %}
+                <input type="hidden" name="confirm_purchased" value="{{key.id}}">
+                <input type="submit" value="Confirm" class=" block w-full bg-green-500 hover:bg-green-600 text-white font-bold"/>
+            </form>
+            
+        </div>
+
+        <section class="hidden bg-white m-3 md:mx-10 lg:mx-15  rounded-lg fixed top-10 left-0 md:left-10 bottom-10 right-0 md:right-10 opacity-95 h-8/10">
+            <div class="flex flex-row justify-between bg-gray-700 text-white p-1 md:p-2 lg:p-3 rounded-t-lg font-bold px-5 ">
+                <div onclick="hide_section_img(event)" class="bg-red-500 hover:bg-red-600 px-2 rounded-md">
+                    Close
+                </div>
+                <div>{{key.user.first_name}} {{key.user.last_name}}</div>
+                <div onclick="hide_section_img(event)" class="bg-green-500 hover:bg-green-600 px-2 rounded-md">
+                    <form method="post" >
+                        {% csrf_token %}
+                            <input type="hidden" name="confirm_purchased" value="{{key.id}}">
+                            <input type="submit" value="Confirm" />
+                    </form>
+                </div>
+                
+            </div>
+            {% if key.img_confirm_purchased %}
+                <img src={{key.img_confirm_purchased.url}} class="h-full mx-auto"/>
+            {% else %}
+                <div class="bg-red-200 boreder-2 border-red-300 text-gray-600 px-5 py-1 rounded-md font-bold">image not found</div>
+            {% endif %}
+
+        </section>
+
+        <section class="hidden bg-white m-3 md:mx-10 lg:mx-15  rounded-lg fixed top-20 left-0 md:left-10 bottom-30 right-0 md:right-10 opacity-95">
+            <div class="flex flex-row justify-between bg-gray-700 text-white p-1 md:p-2 lg:p-3 rounded-t-lg font-bold px-5 ">
+                <div>{{key.user.first_name}} {{key.user.last_name}}</div>
+                <div onclick="hide_section(event)" class="bg-red-500 hover:bg-red-600 px-2 rounded-xl">
+                    X
+                </div>
+            </div>
+            <form method="post" class="p-2 md:p-4 lg:p-6">
+                {% csrf_token %}
+                <label>Message</label>
+                {% if key.message is None %}
+                <textarea name="message" rows="4" class="w-full" placeholder="Message"></textarea>
+                {% else %}
+                <textarea name="message" rows="4" class="w-full" placeholder="Message">{{key.message}}</textarea>
+                {% endif %}
+                
+                <label>Note</label>
+                {% if key.notes is None %}
+                <textarea name="notes" rows="4" class="w-full" placeholder="Message"></textarea>
+                {% else %}
+                <textarea name="notes" rows="4" class="w-full" placeholder="Message">{{key.notes}}</textarea>
+                {% endif %}
+
+                <input type="hidden" name="message_notes" value="{{key.id}}">
+                <input type="submit" value="Save" class="m-1 p-1 text-center block w-full bg-green-500 hover:bg-green-600 text-white font-bold"/>
+                <div onclick="hide_section(event)" class=" m-1 p-1 text-center block w-full bg-red-500 hover:bg-red-600 text-white font-bold">Cancel</div>
+            </form>
+        </section>
+        
+    </div>
+
+{% endfor %}
+{% endblock content3%}

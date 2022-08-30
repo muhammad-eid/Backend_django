@@ -123,12 +123,33 @@ def mod_dashboard_control(request):
         return redirect('/dashboard/')
 
     if request.method=='POST':
-        pass
+        
+        search = Key.objects.all().filter(user__first_name__icontains=request.POST['search'])
+        search |= Key.objects.all().filter(user__last_name__icontains=request.POST['search'])
+        search |= Key.objects.all().filter(user__email__icontains=request.POST['search'])
+        search |= Key.objects.all().filter(user__phone__icontains=request.POST['search'])
+        search |= Key.objects.all().filter(user__company_name__icontains=request.POST['search'])
+        search |= Key.objects.all().filter(key__icontains=request.POST['search'])
+        try: 
+            search = Key.objects.all().filter(
+                user__first_name__icontains=request.POST['search'].split(' ')[0],
+                user__last_name__icontains=request.POST['search'].split(' ')[1]
+             )
+
+        except:
+            pass
+
+        context = {
+            'is_search':True,
+            'search' : search,
+            'keys':Key.objects.all().order_by('-gen_date')
+        }
+        return render(request, 'mod_dashboard/control.html', context)
 
     elif request.method=='GET':
         context = {
             'user':user,
-            'keys':user.key_set.all()
+            'keys':Key.objects.all().order_by('-gen_date')
         }
         return render(request, 'mod_dashboard/control.html', context)
 

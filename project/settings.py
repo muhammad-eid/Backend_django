@@ -32,8 +32,10 @@ ALLOWED_HOSTS = ['0.0.0.0', '192.168.1.10']
 # Application definition
 
 INSTALLED_APPS = [
+    'home.apps.HomeConfig',
     "crispy_forms",
     "crispy_bootstrap5",
+    'api.apps.ApiConfig',
     'dashboard.apps.DashboardConfig',
     'mod_dashboard.apps.ModDashboardConfig',
     'registration.apps.RegistrationConfig',
@@ -44,6 +46,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
 ]
 
 # CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
